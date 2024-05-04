@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-#include "tensor.h"
+#include "../include/tensor.h"
 #define C 299792458
 
 using namespace std;
@@ -52,8 +52,9 @@ int main(){
               0,  0,-1, 0,
               0,  0, 0,-1);
     
-    cout<< "gamma: " << gam << endl;
-    cout << beta << endl;
+    cout << matrix << endl;
+    cout << "gamma: " << gam << endl;
+    cout << "beta: " << beta << endl;
     Vector4 A(0, 0, 0, 0);
     Vector4 B(0, 1800, 0, 0);
     Vector4 D(0, 0, 0, 0);

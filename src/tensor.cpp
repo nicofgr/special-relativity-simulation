@@ -1,6 +1,6 @@
 #include <vector>
 #include <iostream>
-#include "tensor.h"
+#include "../include/tensor.h"
 
 Vector4::Vector4(double x0, double x1, double x2, double x3) : vector{x0, x1, x2, x3}{}
 double Vector4::at(int pos){
