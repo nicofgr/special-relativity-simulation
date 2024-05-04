@@ -7,10 +7,10 @@ LDIR=../lib
 
 LIBS=
 
-_DEPS = tensor.h
+_DEPS = tensor.h special-relativity.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = sim.o tensor.o
+_OBJ = main.o tensor.o special-relativity.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
