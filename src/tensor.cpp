@@ -21,7 +21,7 @@ double& Vector4::operator[](int pos){
 
 std::ostream& operator<<(std::ostream& stream, Vector4 vector){
     stream << "( ";
-    stream << vector[0]/(299792458) << "c,";
+    stream << vector[0] << ",";
     for(int i = 1; i <= 2; i++)
         stream << vector[i] << ",";
     stream << vector[3];

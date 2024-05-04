@@ -7,7 +7,7 @@
 using namespace std;
 
 double gamma(double velocity){
-    return 1/sqrt(1-pow(velocity/double(C),2));
+    return 1/sqrt(1-pow(velocity,2));
 }
 
 double own_time(double time, double velocity){
@@ -40,9 +40,9 @@ int main(){
 
     main_referential mainref;
     
-    double velocity = 0.8*C;
+    double velocity = 0.8;  // USAR % DE c
     double gam = gamma(velocity);
-    double beta = velocity/C;
+    double beta = velocity;
     Matrix4 matrix( gam      , -gam*beta, 0, 0,
                     -gam*beta,       gam, 0, 0,
                     0        ,         0, 1, 0,
