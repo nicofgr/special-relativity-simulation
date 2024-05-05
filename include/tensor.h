@@ -3,6 +3,8 @@
 #include<iostream>
 #include<vector>
 
+namespace tsr{
+
 class Vector4{
     std::vector<double> vector;
   public:
@@ -11,6 +13,7 @@ class Vector4{
     double operator*(Vector4 other_vector);
     double operator[](int pos) const;
     double& operator[](int pos);
+    Vector4 operator-(Vector4 other_vector);
 };
 
 class Matrix4{
@@ -26,7 +29,11 @@ class Matrix4{
     Vector4 get_column(int i);
     Matrix4 operator*(Matrix4 other_matrix);
     Vector4 operator*(Vector4 vector);
+    Matrix4 inverse();
 };
-std::ostream& operator<<(std::ostream& stream, Vector4 vector);
-std::ostream& operator<<(std::ostream& stream, Matrix4 matrix);
+}
+std::ostream& operator<<(std::ostream& stream, tsr::Vector4 vector);
+std::ostream& operator<<(std::ostream& stream, tsr::Matrix4 matrix);
+
+
 #endif

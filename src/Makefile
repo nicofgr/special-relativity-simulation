@@ -5,7 +5,7 @@ CFLAGS=-I$(IDIR)
 ODIR=obj
 LDIR=../lib
 
-LIBS=
+LIBS=-lraylib
 
 _DEPS = tensor.h special-relativity.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
