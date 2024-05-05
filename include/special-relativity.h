@@ -8,26 +8,42 @@
 namespace sr{
 
     const tsr::Matrix4 g(1,  0, 0, 0,
-                    0, -1, 0, 0,
-                    0,  0,-1, 0,
-                    0,  0, 0,-1);
+                         0, -1, 0, 0,
+                         0,  0,-1, 0,
+                         0,  0, 0,-1);
 
     int get_c();
     void set_c(int new_value);
 
     class spacetime{
         std::vector<tsr::Vector4> events;
-        std::vector<tsr::Matrix4> reference_frame;
+        tsr::Matrix4 current_Ref;
       public:
+        spacetime();
         void add_event(tsr::Vector4 event);
         void add_event(double x0, double x1, double x2, double x3);
+        int get_event_size();
         void list_events();
-        void add_rFrame(double v1, double v2, double v3);
+        tsr::Vector4 operator[](int index);
+        void update_rFrame(double vel);
+        tsr::Matrix4 get_fwrd() const;
+    };
+    class entity{
+        tsr::Vector4 position;
+        tsr::Vector4 velocity;
+      public:
+        entity(double x1 = 0, double x2 = 0, double x3 = 0, 
+               double v1 = 0, double v2 = 0, double v3 = 0) : position(1,x1,x2,x3), 
+                                                              velocity(1,v1,v2,v3) {}
+        void update_position(double dt);
+        double operator[](int index) const;
     };
 
     double gamma(double velocity);
     double gamma(double v1, double v2, double v3);
     double own_time(double time, double velocity);
     double own_distance(double distance, double velocity);
+    tsr::Matrix4 fwrd(double velocity);
+    tsr::Matrix4 bkrd(double velocity);
 }
 #endif
