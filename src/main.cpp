@@ -8,19 +8,37 @@
 
 using namespace std;
 
-void DrawEvent(tsr::Vector4 event, Color color = RED){
+void DrawEvent(tsr::Vector4 event, Color color = GRAY){
     DrawCircle(event[1], -event[0], 2, color);
+}
+void DrawEntity(sr::entity entity, Color color = BLUE){
+    for(int t = 0; t < 100; t++){
+        entity.update_position(1);
+        DrawCircle(-entity.get_position()[1], -t, 3, color);
+    }
 }
 void DrawWorldLines(sr::spacetime spacetime, int screenWidth, int screenHeight){
     for(int i = -10; i < 10; i++){
-        tsr::Vector4 start(-screenHeight/2.0f, i*50, 0, 0);
-        tsr::Vector4 finish(screenHeight, i*50, 0, 0);
-        start = spacetime.get_fwrd()*start;
-        finish = spacetime.get_fwrd()*finish;
-        DrawLine(start[1], -start[0], finish[1], -finish[0], GRAY);
+        tsr::Vector4 startV(-screenHeight/2.0f, i*50, 0, 0);
+        tsr::Vector4 finishV(screenHeight, i*50, 0, 0);
+        startV = spacetime.get_fwrd()*startV;
+        finishV = spacetime.get_fwrd()*finishV;
+        DrawLine(startV[1], -startV[0], finishV[1], -finishV[0], GRAY);
+
+        tsr::Vector4 startH(i*50, -screenWidth, 0, 0);
+        tsr::Vector4 finishH(i*50, screenWidth, 0, 0);
+        startH = spacetime.get_fwrd()*startH;
+        finishH = spacetime.get_fwrd()*finishH;
+        DrawLine(startH[1], -startH[0], finishH[1], -finishH[0], GRAY);
     }
     DrawLine(0, -screenHeight, 0, screenHeight, WHITE);     // x0 Ax |
     DrawLine(-screenWidth/2.0f, 0, screenWidth/2.0f, 0, WHITE);  // x1 Ax --
+}
+void DrawSpacetime(sr::spacetime spacetime, Color color = PINK){
+    for(int i = 0; i < spacetime.get_event_size(); i++)
+        DrawEvent(spacetime[i], color);
+    for(int i = 0; i < spacetime.get_entity_size(); i++)
+        DrawEntity(spacetime.get_entity(i), BLUE);
 }
 
 int main(){
@@ -29,41 +47,12 @@ int main(){
     sr::set_c(1);
     cout << "c: " << sr::get_c() << endl;
 
-    sr::spacetime mainref;
-    
-    double velocity = 0.8;  // USAR % DE c
-    double gam = sr::gamma(velocity);
-    tsr::Vector4 gam4 = sr::gamma(velocity, velocity, velocity);
-    double beta = velocity;
-    tsr::Matrix4 matrixF = sr::fwrd(velocity);
-    tsr::Matrix4 matrixB( gam      , gam*beta, 0, 0,
-                    gam*beta,       gam, 0, 0,
-                    0        ,         0, 1, 0,
-                    0        ,         0, 0, 1);
-    
-    //cout << matrix << endl;
-    cout << "γ: " << gam << endl;
-    cout << "β: " << beta << endl;
-    tsr::Vector4 A(0, 0, 0, 0);     // Position A
-    tsr::Vector4 B(0, 300, 0, 0);  // Position B
-    tsr::Vector4 Ai = matrixF*A;
-    tsr::Vector4 Bi = matrixF*B;
-    cout << "Position B = " << B << endl;
-    cout << "Position B' = " << matrixF*B << endl;
-    cout << matrixF*tsr::Vector4(240,300,0,0) << endl;
-
-    mainref.add_event(0,0,0,0);
-    mainref.add_event(0,180,0,0);
-    mainref.list_events();
-
-    cout << "My time: 3 s" << endl;
-    cout << "Particle time: "<< sr::own_time(3, velocity) << " s" << endl;
-    cout << "My distance: 300 m" << endl;
-    cout << "Particle distance: "<< sr::own_distance(300, velocity) << " m" << endl;
-    
     sr::spacetime ref;
     for(int i = 0; i < 800; i++){
         ref.add_event(tsr::Vector4(i, 0, 0 ,0));
+        ref.add_event(tsr::Vector4(i, i*0.5, 0 ,0));
+        ref.add_event(tsr::Vector4(i, i*0.75, 0 ,0));
+        ref.add_event(tsr::Vector4(i, i*0.714, 0 ,0));
     }
     sr::spacetime refPoints;
     for(int i = 0; i < 100; i++){
@@ -75,7 +64,8 @@ int main(){
         refPoints.add_event(tsr::Vector4(i*50, 150, 0, 0));
         refPoints.add_event(tsr::Vector4(i*50, -150, 0, 0));
     }
-
+    ref.add_entity(0.5);
+    ref.add_entity(0.75);
 
     const int screenWidth = 800;
     const int screenHeight = 700;
@@ -100,21 +90,22 @@ int main(){
         ClearBackground(BLACK);
         BeginMode2D(camera);
             DrawWorldLines(ref, screenWidth, screenHeight);
-            sr::entity partA(20, 0, 0, 0.5, 0, 0);
             for(int i = 0; i < 4*screenWidth/5.0f; i++){
                 DrawPixel(i, -i, YELLOW);
                 DrawPixel(-i, -i, YELLOW);
-                ref.update_rFrame(vel);
-                DrawEvent(ref[i], PINK);
                 refPoints.update_rFrame(vel);
-                DrawEvent(refPoints[i], GRAY);
+                DrawEvent(refPoints[i]);
             }
+        ref.update_rFrame(vel);
+        DrawSpacetime(ref);
         EndMode2D();
 
         string text = "Velocity: " + to_string(vel*100) + "%";
         string text2 = "Gamma: " + to_string(sr::gamma(vel));
+        string text3 = "Ent vel: " + to_string(ref.get_entity(0).get_velocity()[1]*100);
         DrawText(text.c_str(), 20, 20, 10, WHITE);
         DrawText(text2.c_str(), 20, 40, 10, WHITE);
+        DrawText(text3.c_str(), 20, 60, 10, WHITE);
         EndDrawing();
     }
 
